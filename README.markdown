@@ -12,39 +12,43 @@ Usage
 
 ### new
 
-To create a new CPU instance:
+#### Example: Creating a new CPU instance.
 
     cpu = new CPU();
 
 ### start
 
-To start the CPU:
+#### Example: Starting the CPU.
 
     cpu.start();
 
 ### stop
 
-To stop the CPU:
+#### Example: Stopping the CPU.
 
     cpu.stop();
 
 ### reboot
 
-To restart the CPU:
+#### Example: Restarting the CPU.
 
     cpu.reboot();
 
 ### throttle
 
-`throttle` controls the amount of time between CPU ticks. The ticks are in
-milliseconds, but the actual time to process the stack will vary depending on
-how many jobs are in the queue.
+**Default:** 1
 
-Defaults to 1 millisecond between ticks.
+Controls the amount of time between CPU ticks. The ticks are in milliseconds,
+but the actual time to process the stack will vary depending on how many jobs
+are in the queue.
 
 Changes to the throttle while the CPU is running will not be applied until the
 CPU instance is rebooted:
 
+#### Example: Changing the throttle after the CPU has been started.
+
+    var cpu = new CPU();
+    
     // start a CPU instance
     cpu.start();
     
@@ -65,7 +69,28 @@ CPU instance is rebooted:
 
 **Returns** *(Integer)* - The index of the registered function.
 
-See the examples for more information on using this method.
+#### Example: Register a job that will execute only 5 times.
+
+    var cpu = new CPU()
+      , job = function(){
+          console.log(
+            "this job has run " + this.cycle + " times, and is scheduled to " +
+            "run " + this.cycles + " times total."
+          );
+        };
+    
+    cpu.register(job, 100, 5);
+    cpu.start();
+
+#### Example: Register a job that will execute an infinite amount of times.
+
+    var cpu = new CPU()
+      , job = function(){
+          console.log("To infinity, and beyond!");
+        };
+    
+    cpu.register(job, 100, 0);
+    cpu.start();
 
 
 ### unregister
@@ -76,43 +101,29 @@ See the examples for more information on using this method.
 
 **Returns** *(Object)* - The job that was unregistered.
 
-
-Examples
-========
-
-### How to register a job
-
-    cpu.register(
-        function(){
-          console.log(
-            "this job has run " + this.cycle + " times, and is scheduled to " +
-            "run " + this.cycles + " times total."
-          );
-        }
-      , 100
-      , 5
-    );
-
-
-### How to register a job to run an infinite amount of times
-
-    cpu.register(
-        function(){
-          console.log("to infinity, and beyond!");
-        }
-      , 100
-      , 0 // <= zero = infinite
-    );
-
-
-### How to unregister a job from within the job
-
-    cpu.register(
-        function(){
+#### Example: Unregister a job from within a running job.
+    
+    var cpu = CPU.new
+      , job = function(){
           console.log("this is an infinite job, but will only run once.");
           cpu.unregister(cpu.indexOf(this));
-        }
-      , 100
-      , 5
-    );
+        };
+    
+    cpu.register(job, 100, 0);
+    cpu.start();
 
+
+### indexOf
+
+`CPU.indexOf(job)`
+
+    job         The job to find
+
+**Returns** *(Integer)* - The index of the job, or -1 if the job is not found.
+
+#### Example: Register a job, find it, and unregister it.
+
+    var cpu = new CPU()
+      , job = function() {};
+    cpu.register(job, 100, 0);
+    cpu.unregister(cpu.indexOf(job));
