@@ -69,6 +69,18 @@ CPU instance is rebooted:
 
 **Returns** *(Integer)* - The index of the registered function.
 
+`this` within the called function will be the job, which contains these
+attributes:
+
+    func        The function to call for the job
+    cycle       The current job cycle
+    cycles      The total job cycles
+    interval    The interval between cycles
+
+When the function is called, the first argument passed will be the CPU instance
+it is registered to.
+
+
 #### Example: Register a job that will execute only 5 times.
 
     var cpu = new CPU()

@@ -27,7 +27,7 @@ CPU = (function() {
       , interval  : interval
       , cycles    : cycles
       , cycle     : 0
-      , tick      : 0
+      , _tick     : 0
     });
   };
   
@@ -48,14 +48,14 @@ CPU = (function() {
         
         for(i in cpu._stack){
           
-          if(++cpu._stack[i].tick>=cpu._stack[i].interval){
+          if(++cpu._stack[i]._tick>=cpu._stack[i].interval){
             
             if(cpu._stack[i].cycles>0 && ++cpu._stack[i].cycle>cpu._stack[i].cycles) {
               cpu.unregister(i);
             } else {
-              cpu._stack[i].tick = 0;
+              cpu._stack[i]._tick = 0;
               
-              setTimeout(cpu._stack[i].func,0);
+              setTimeout(cpu._stack[i].func.apply(cpu._stack[i], cpu),0);
             }
           
           }
